@@ -19,6 +19,9 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import presence_of_element_located
 from selenium.webdriver.support.wait import WebDriverWait
 from typing import List
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 dotenv.load_dotenv()
 
@@ -77,7 +80,7 @@ def collect_all_feedbacks(driver_var: WebDriver, time: int) -> List[WebElement]:
             feedbacks_list.extend(new_feedbacks_list)
             break
         new_feedbacks_list = driver_var.find_elements(By.CLASS_NAME, 'comments__item')[len(feedbacks_list):]
-
+    logging.info(f'{len(feedbacks_list)} elements found')
     return feedbacks_list
 
 
@@ -129,6 +132,7 @@ async def handle_page(driver_var: WebDriver, url: str, sku: str) -> None:
                     pass
 
                 feedback_data_item = f"{feedback_name}/{product_name}/{sku}/{feedback_stars}/{feedback_text}/{rating}"
+                logging.info(f'Collected: {feedback_data_item}')
                 DATA.append(feedback_data_item)
 
     except TimeoutException:
@@ -151,6 +155,8 @@ async def main():
     Returns:
         None
     """
+    logging.info(f'Started...')
+
     # maintain options
     options = Options()
     options.add_argument('--window-size=1524,1580')
@@ -214,7 +220,8 @@ def stop_bot():
     :return:
     """
     bot.stop_polling()
-    print("Bot server has been done.")
+
+    logging.info(f'Finished')
     sys.exit()
 
 
